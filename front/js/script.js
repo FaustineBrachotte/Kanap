@@ -1,3 +1,5 @@
+// récupération de la liste des produits
+
 class Product { 
     constructor(jsonProduct) {
         jsonProduct && Object.assign(this, jsonProduct);
@@ -9,7 +11,7 @@ fetch("http://localhost:3000/api/products")
     .then( jsonProductList => {
         for(let jsonProduct of jsonProductList) {
             let product = new Product(jsonProduct);
-            document.querySelector(".items").innerHTML += `<a href="./product.html?id=42">
+            document.querySelector(".items").innerHTML += `<a href="./product.html?id=${product._id}">
                                                                 <article>
                                                                 <img src="${product.imageUrl}" alt="${product.altTxt}">
                                                                 <h3 class="productName">${product.name}</h3>
