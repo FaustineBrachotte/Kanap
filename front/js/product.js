@@ -22,13 +22,24 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         let colorList = value.colors;
         let selectColors = document.getElementById("colors");
         let color;
-            for(let i = 0; i < colorList.length; i++){
+            for(let i of colorList){
                 color = document.createElement("option");
-                color.setAttribute("value", colorList[i]);
-                color.innerText = colorList[i];
+                color.setAttribute("value", i);
+                color.innerText = i;
                 selectColors.appendChild(color);
             }
-         })
-    .catch(function(err) {
-        // Une erreur est survenue
-      });
+
+        // add to cart
+
+        let addToCartBtn = document.getElementById("addToCart");    
+        addToCartBtn.addEventListener('click', function() {     
+              
+            let objJson = {
+                id : value._id,
+                color : document.getElementById("colors").value,
+                quantity : document.getElementById("quantity").value
+            }        
+            localStorage.setItem("obj",JSON.stringify(objJson));            
+        });
+            
+        });
