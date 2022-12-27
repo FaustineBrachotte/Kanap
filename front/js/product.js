@@ -33,13 +33,35 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 
         let addToCartBtn = document.getElementById("addToCart");    
         addToCartBtn.addEventListener('click', function() {     
-              
-            let objJson = {
+            addToCart();
+        });
+            
+        
+        function addToCart() {
+
+            let couch = {
                 id : value._id,
                 color : document.getElementById("colors").value,
                 quantity : document.getElementById("quantity").value
             }        
-            localStorage.setItem("obj",JSON.stringify(objJson));            
-        });
-            
-        });
+
+            getCart();
+            saveCart(couch);
+
+        }
+
+        function getCart() {
+            let cart = localStorage.getItem("cart");
+            if(cart == null) {
+                return [];
+            }else{
+                return JSON.parse(cart);
+            }
+        }
+
+        function saveCart(couch) {
+            localStorage.setItem("cart",JSON.stringify(couch)); 
+        }
+
+
+    });
