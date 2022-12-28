@@ -32,52 +32,65 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 
         // ajout du canapé sélectionné au panier
 
-        let addToCartBtn = document.getElementById("addToCart");    
+        class Couch {
+            constructor(id, color, quantity) {
+                this.id = id;
+                this.color = color;
+                this.quantity = quantity;
+            }
+        }
+
+        const addToCartBtn = document.getElementById("addToCart");    
         addToCartBtn.addEventListener('click', function() {     
             addToCart();
         });
             
         
         function addToCart() {
-            const couch = {
-                id : value._id,
-                color : document.getElementById("colors").value,
-                quantity : document.getElementById("quantity").value,
-            };
+
+            const couch = new Couch(value._id, document.getElementById("colors").value, document.getElementById("quantity").value);
+
             let cart = getCart();
             console.log(cart);
             console.log(couch);
 
             compareCart(cart,couch);
-            //saveCart(couch);
+            //addCouch(cart,couch)
+            console.log(cart);
+            saveCart(cart);
 
         }
 
         // retourne le panier sous forme de tableau
         function getCart() {
             cart = localStorage.getItem("cart");
-            console.log(cart);
             if(cart == null) {
                 return [];
             }else{
-                return [JSON.parse(cart)];
+                return JSON.parse(cart);
             }
         }
 
         function compareCart(cart,couch) {
-
             for (let i = 0; i < cart.length; i++) {
                 if(cart[i].id == couch.id && cart[i].color == couch.color) {
-                    window.alert("yes!");
+                    console.log("yes!");
+                    cart[i].quantity = Number(cart[i].quantity) + Number(couch.quantity);
+                    break;
                 }else{
-                    window.alert("no");
+                    console.log("no");
+                    addCouch(cart,couch);
+                    break;
                 }
-           }
-           console.log(couch.id);
+            }
         }
 
-        function saveCart(couch) {
-            localStorage.setItem("cart",JSON.stringify(couch)); 
+        function addCouch(cart,couch) {
+            cart.push(couch);
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem("cart",JSON.stringify(cart)); 
         }
 
     });
