@@ -48,15 +48,16 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         
         function addToCart() {
 
-            const couch = new Couch(value._id, document.getElementById("colors").value, document.getElementById("quantity").value);
+            const newCouch = new Couch(value._id, document.getElementById("colors").value, document.getElementById("quantity").value);
 
             let cart = getCart();
             console.log(cart);
-            console.log(couch);
 
-            compareCart(cart,couch);
-            //addCouch(cart,couch)
-            console.log(cart);
+            if (cart.length == 0) {
+                addCouch(cart,newCouch)
+            } else {
+                compareCart(cart,newCouch);
+            }
             saveCart(cart);
 
         }
@@ -64,6 +65,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         // retourne le panier sous forme de tableau
         function getCart() {
             cart = localStorage.getItem("cart");
+            console.log(cart);
             if(cart == null) {
                 return [];
             }else{
@@ -71,22 +73,42 @@ fetch(`http://localhost:3000/api/products/${productId}`)
             }
         }
 
-        function compareCart(cart,couch) {
-            for (let i = 0; i < cart.length; i++) {
-                if(cart[i].id == couch.id && cart[i].color == couch.color) {
-                    console.log("yes!");
-                    cart[i].quantity = Number(cart[i].quantity) + Number(couch.quantity);
-                    break;
-                }else{
-                    console.log("no");
-                    addCouch(cart,couch);
-                    break;
-                }
+        function compareCart(cart,newCouch) {
+            let i = 0;
+            let cartCouch = cart[i];
+            console.log("cart.length " + cart.length);
+            console.log(cartCouch);
+            console.log("isEqual(cartCouch,newCouch) " + isEqual(cartCouch,newCouch));
+            let couchesAreDifferent = true;
+
+            for (cartCouch of cart) {
+                console.log("Dans boucle + " + cartCouch);
+                console.log("cart.length + " + cart.length);
+                if(isEqual(cartCouch,newCouch)) {
+                    console.log("égal");
+                    cartCouch.quantity = Number(cartCouch.quantity) + Number(newCouch.quantity);
+                    console.log("cartCouch.quantity = " + cartCouch.quantity);
+                    couchesAreDifferent = false;
+                }}
+
+            if (couchesAreDifferent) {
+                addCouch(cart,newCouch);
             }
         }
 
-        function addCouch(cart,couch) {
-            cart.push(couch);
+        function isEqual(cartCouch,newCouch) {
+            console.log("dans isequal");
+            console.log("cartCouch.id = " + cartCouch.id + " newCouch.id = " +  newCouch.id + " Et cartCouch.color  = " + cartCouch.color + " newCouch.color = " + newCouch.color);
+            console.log(newCouch);
+            if(cartCouch.id == newCouch.id && cartCouch.color == newCouch.color) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        function addCouch(cart,newCouch) {
+            cart.push(newCouch);   
         }
 
         function saveCart(cart) {
