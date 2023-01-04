@@ -7,6 +7,7 @@ class Product {
 }
 
 fetch("http://localhost:3000/api/products")
+    .catch(error => console.log("fetch error", error))
     .then( data => data.json())
     .then( jsonProductList => {
         for(let jsonProduct of jsonProductList) {
