@@ -23,7 +23,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         const colorList = value.colors;
         const selectColors = document.getElementById("colors");
         let color;
-            for(let i of colorList){
+            for(const i of colorList){
                 color = document.createElement("option");
                 color.setAttribute("value", i);
                 color.innerText = i;
@@ -49,8 +49,8 @@ class Couch {
 
         
     function addToCart() {
-        let color = document.getElementById("colors").value;
-        let quantity = document.getElementById("quantity").value;
+        const color = document.getElementById("colors").value;
+        const quantity = document.getElementById("quantity").value;
 
         if (color == "") {
             alert ("Veuillez choisir une couleur");
