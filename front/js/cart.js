@@ -55,34 +55,41 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
                                                                 </div>
                                                               </div>
                                                             </article>`;
+        // calcul de la quantité et du prix total                                                      
         totalPrice += value.price * couch.quantity;
         document.getElementById("totalPrice").innerText = totalPrice; 
         totalQuantity += Number(couch.quantity); 
         document.getElementById("totalQuantity").innerText = totalQuantity; 
 
-        changeQuantity(cart,couch);
-        deleteItem(cart,couch);
-
-        
+        updateQuantity(cart,couch);
+        deleteItem(cart,couch);      
 })
 };
 
 
-// fonctions modification du panier
-
-function changeQuantity(cart,couch) {
+// mise à jour de la quantité du canapé
+function updateQuantity(cart) {
   const currentQuantity = document.querySelectorAll('.itemQuantity');
   currentQuantity.forEach((currentQuantity) => {
   currentQuantity.addEventListener('change', function() {
-  console.log("ok change");
-})})};
+    const item = currentQuantity.closest('article');
+    const found = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
+    if (currentQuantity.value <= 0) {
+      cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+    } else {
+      found.quantity = currentQuantity.value;
+    }
+    localStorage.setItem("cart",JSON.stringify(cart)); 
+    location.reload();
+    }
+)})};
 
-
+// suppression du canapé
 function deleteItem(cart) {
   const deleteButton = document.querySelectorAll('.deleteItem');
   deleteButton.forEach((deleteButton) => {
   deleteButton.addEventListener('click', function() {
-  let item = deleteButton.closest('article');
+  const item = deleteButton.closest('article');
   cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
   localStorage.setItem("cart",JSON.stringify(cart)); 
   location.reload();
