@@ -1,5 +1,6 @@
 // récupération du panier depuis le localstorage
 let cart = getCart();
+console.log(cart);
 let totalPrice = 0;
 let totalQuantity = 0;
 
@@ -58,13 +59,31 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
         document.getElementById("totalPrice").innerText = totalPrice; 
         totalQuantity += Number(couch.quantity); 
         document.getElementById("totalQuantity").innerText = totalQuantity; 
+
+        changeQuantity(cart,couch);
+        deleteItem(cart,couch);
+
+        
 })
 };
 
 
-// modification du panier
+// fonctions modification du panier
 
-// let input = document.querySelector('.itemQuantity');
-//         input.addEventListener('change', function () {
-//             console.log(this.value);
-//         });
+function changeQuantity(cart,couch) {
+  const currentQuantity = document.querySelectorAll('.itemQuantity');
+  currentQuantity.forEach((currentQuantity) => {
+  currentQuantity.addEventListener('change', function() {
+  console.log("ok change");
+})})};
+
+
+function deleteItem(cart) {
+  const deleteButton = document.querySelectorAll('.deleteItem');
+  deleteButton.forEach((deleteButton) => {
+  deleteButton.addEventListener('click', function() {
+  let item = deleteButton.closest('article');
+  cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+  localStorage.setItem("cart",JSON.stringify(cart)); 
+  location.reload();
+})})};
