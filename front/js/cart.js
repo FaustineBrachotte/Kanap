@@ -6,7 +6,7 @@ let totalQuantity = 0;
 
 function getCart() {
     const cartStr = localStorage.getItem("cart");
-    if (cartStr == null) {
+    if (cartStr == null || cartStr == "[]") {
         emptyCartMsg();
         return [];
     } else if (Array.isArray(JSON.parse(cartStr))) {
@@ -62,7 +62,8 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
         document.getElementById("totalQuantity").innerText = totalQuantity; 
 
         updateQuantity(cart,couch);
-        deleteItem(cart,couch);      
+        deleteItem(cart,couch);
+        order();      
 })
 };
 
@@ -71,26 +72,91 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
 function updateQuantity(cart) {
   const currentQuantity = document.querySelectorAll('.itemQuantity');
   currentQuantity.forEach((currentQuantity) => {
-  currentQuantity.addEventListener('change', function() {
-    const item = currentQuantity.closest('article');
-    const found = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
-    if (currentQuantity.value <= 0) {
-      cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
-    } else {
-      found.quantity = currentQuantity.value;
-    }
-    localStorage.setItem("cart",JSON.stringify(cart)); 
-    location.reload();
-    }
+    currentQuantity.addEventListener('change', function() {
+      const item = currentQuantity.closest('article');
+      const found = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
+      if (currentQuantity.value <= 0) {
+        cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+      } else {
+        found.quantity = currentQuantity.value;
+      }
+      localStorage.setItem("cart",JSON.stringify(cart)); 
+      location.reload();
+      }
 )})};
 
 // suppression du canapé
 function deleteItem(cart) {
   const deleteButton = document.querySelectorAll('.deleteItem');
   deleteButton.forEach((deleteButton) => {
-  deleteButton.addEventListener('click', function() {
-  const item = deleteButton.closest('article');
-  cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
-  localStorage.setItem("cart",JSON.stringify(cart)); 
-  location.reload();
+    deleteButton.addEventListener('click', function() {
+    const item = deleteButton.closest('article');
+    cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+    localStorage.setItem("cart",JSON.stringify(cart)); 
+    location.reload();
 })})};
+
+
+
+// envoi de la commande
+class Contact {
+  constructor(firstName, lastName, address, city, email) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.address = address;
+      this.city = city;
+      this.email = email;
+  }
+}
+
+const firstName = document.getElementById('firstName');
+const lastName = document.getElementById('lastName');
+const address = document.getElementById('address');
+const city = document.getElementById('city');
+const email = document.getElementById('email');
+
+function order() {
+  checkFirstName();
+  checkLastName();
+  checkEmail();
+
+  document.getElementById('order').addEventListener('clik', function() {
+    let contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value)
+    console.log(contact);
+  })
+}
+
+// check des champs du formulaire
+
+function checkFirstName() {
+  firstName.addEventListener('change', function() {
+    let mask = /\d/;
+    if(mask.test(firstName.value)) {
+      document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
+    } else {
+      document.getElementById('firstNameErrorMsg').innerText = "";
+    }
+  })
+}
+
+function checkLastName() {
+  lastName.addEventListener('change', function() {
+    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
+    if(mask.test(lastName.value)) {
+      document.getElementById('lastNameErrorMsg').innerText = "";
+    } else {
+      document.getElementById('lastNameErrorMsg').innerText = "Veuillez renseigner un nom valide";
+    }
+  })
+}
+
+function checkEmail() {
+  email.addEventListener('change', function() {
+    let mask = /^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$/;
+    if(mask.test(email.value)) {
+      document.getElementById('emailErrorMsg').innerText = "";
+    } else {
+      document.getElementById('emailErrorMsg').innerText = "Veuillez renseigner une adresse email valide";
+    }
+  })
+}
