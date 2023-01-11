@@ -1,12 +1,10 @@
  // récupération de l'id produit depuis l'url
-
 let str = window.location.href;
 let url = new URL(str);
 let productId = url.searchParams.get("id");
 
 
 // affichage des données produit
-
 fetch(`http://localhost:3000/api/products/${productId}`)
     .catch(error => console.log("fetch error", error))
     .then(function(res) {
@@ -23,7 +21,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         const colorList = value.colors;
         const selectColors = document.getElementById("colors");
         let color;
-            for(const i of colorList){
+            for(let i of colorList){
                 color = document.createElement("option");
                 color.setAttribute("value", i);
                 color.innerText = i;
@@ -42,42 +40,43 @@ class Couch {
 }
 
   
-    // appelle la fonction addToCart au clic sur le bouton "Ajouter au panier"
-    document.getElementById("addToCart").addEventListener('click', function() {     
-        addToCart();
-    });
+// appelle la fonction addToCart au clic sur le bouton "Ajouter au panier"
+document.getElementById("addToCart").addEventListener('click', function() {     
+    addToCart();
+});
 
-        
     function addToCart() {
         const color = document.getElementById("colors").value;
-        const quantity = document.getElementById("quantity").value;
+        const quantity = document.getElementById("quantity").value;    
+        if(checkInputs(color,quantity)) {
+            let newCouch = new Couch(productId, color, quantity);
+            let cart = getCart();
+            if (!compareCart(cart,newCouch)) { 
+                addCouch(cart,newCouch);
+            }
+            saveCart(cart);
+        };
+    }
 
+    // vérifie si les inputs de l'utilisateurs sont corrects
+    function checkInputs(color,quantity) {
         if (color == "") {
             alert ("Veuillez choisir une couleur");
-        }
-
-        if (quantity <= 0 || quantity > 100) {
+            return false;
+        } else if (quantity <= 0 || quantity > 100) {
             alert ("Veuillez choisir un nombre d'articles entre 1 et 100");
+            return false;
         }
-
-        let newCouch = new Couch(productId, color, quantity);
-        let cart = getCart();
-        let isInCart = compareCart(cart,newCouch);
-        if (!isInCart) { 
-            addCouch(cart,newCouch);
-        }
-        saveCart(cart);
+        return true;
     }
 
     // retourne le panier sous forme de tableau
     function getCart() {
         cart = localStorage.getItem("cart");
-        if (cart == null) {
-            return [];
-        } else if (Array.isArray(JSON.parse(cart))) {
+        if (cart != null && Array.isArray(JSON.parse(cart))) {
             return JSON.parse(cart);
         } else {
-            console.log("error: cart is not an array");
+            return [];        
         }
     }
 

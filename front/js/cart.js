@@ -61,8 +61,8 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
         totalQuantity += Number(couch.quantity); 
         document.getElementById("totalQuantity").innerText = totalQuantity; 
 
-        updateQuantity(cart,couch);
-        deleteItem(cart,couch);
+        updateQuantity(cart);
+        deleteItem(cart);
         order();      
 })
 };
