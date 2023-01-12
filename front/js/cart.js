@@ -1,27 +1,22 @@
 // récupération du panier depuis le localstorage
 let cart = getCart();
 console.log(cart);
-let totalPrice = 0;
-let totalQuantity = 0;
+emptyCartMsg(cart);
 
 function getCart() {
-    const cartStr = localStorage.getItem("cart");
-    if (cartStr == null || cartStr == "[]") {
-        emptyCartMsg();
-        return [];
-    } else if (Array.isArray(JSON.parse(cartStr))) {
-        return JSON.parse(cartStr);
-    } else {
-        console.log("error: cart is not an array");
-    }
+  let cartStr = localStorage.getItem("cart");
+  if (cartStr != null && Array.isArray(JSON.parse(cartStr))) {
+      return JSON.parse(cartStr);
+  } else {
+      return [];        
+  }
 }
 
 // affichage d'un message si le panier est vide
-function emptyCartMsg() {
-    const cartDiv = document.getElementById("cart__items");
-    const cartMsg = document.createElement("p");
-    cartMsg.innerText = "Aucun article n'a été ajouté au panier";
-    cartDiv.appendChild(cartMsg);
+function emptyCartMsg(cart) {
+    if (cart.length < 1) {
+      document.querySelector("#cartAndFormContainer > h1").innerText = "Votre panier est vide";
+    }
 }
 
 // affichage des informations des produits contenus dans le panier
@@ -55,18 +50,42 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
                                                                 </div>
                                                               </div>
                                                             </article>`;
-        // calcul de la quantité et du prix total                                                      
-        totalPrice += value.price * couch.quantity;
-        document.getElementById("totalPrice").innerText = totalPrice; 
-        totalQuantity += Number(couch.quantity); 
-        document.getElementById("totalQuantity").innerText = totalQuantity; 
-
+        //totalCalc(value,couch);
+        totalQuantity();
+        totalPrice();
         updateQuantity(cart);
         deleteItem(cart);
-        order();      
+        // order(); 
 })
 };
 
+
+// calcul de la quantité et du prix total 
+function totalCalcold(value,couch) {                                                    
+  totalPrice += value.price * couch.quantity;
+  document.getElementById("totalPrice").innerText = totalPrice; 
+  totalQuantity += Number(couch.quantity); 
+  document.getElementById("totalQuantity").innerText = totalQuantity; 
+} 
+
+function totalQuantity() {  
+  let totalQuantity = 0;
+  const itemQuantity = document.querySelectorAll('.itemQuantity');
+  itemQuantity.forEach((itemQuantity) => {
+    totalQuantity += Number(itemQuantity.value);
+    document.getElementById("totalQuantity").innerText = totalQuantity;
+  })} 
+
+function totalPrice() {  
+  let totalPrice = 0;
+  const cartItem = document.querySelectorAll('.cart__item');
+  cartItem.forEach((itemPrice) => {
+    itemPrice = document.querySelectorAll('.cart__item__content__description p:nth-of-type(2)');
+    itemPrice.forEach((itemPrice) => {
+      const nbprice = itemPrice.split('');
+      console.log(nbprice);
+    console.log(Split(itemPrice.textContent));
+  })})}   
 
 // mise à jour de la quantité du canapé
 function updateQuantity(cart) {
@@ -80,8 +99,8 @@ function updateQuantity(cart) {
       } else {
         found.quantity = currentQuantity.value;
       }
-      localStorage.setItem("cart",JSON.stringify(cart)); 
-      location.reload();
+      saveCart(cart); 
+      totalQuantity();
       }
 )})};
 
@@ -92,9 +111,13 @@ function deleteItem(cart) {
     deleteButton.addEventListener('click', function() {
     const item = deleteButton.closest('article');
     cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
-    localStorage.setItem("cart",JSON.stringify(cart)); 
+    saveCart(cart); 
     location.reload();
 })})};
+
+function saveCart(cart) {
+  localStorage.setItem("cart",JSON.stringify(cart)); 
+}
 
 
 
@@ -121,12 +144,21 @@ function order() {
   checkEmail();
 
   document.getElementById('order').addEventListener('clik', function() {
+    checkInputs(firstName, lastName, address, city, email);
     let contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value)
     console.log(contact);
   })
 }
 
 // check des champs du formulaire
+
+function checkInputs(fistName, lastName, address, city, email) {
+  checkFirstName();
+  checkLastName();
+  checkAddress();
+  checkCity();
+  checkEmail();
+}
 
 function checkFirstName() {
   firstName.addEventListener('change', function() {

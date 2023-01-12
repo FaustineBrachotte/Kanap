@@ -72,9 +72,9 @@ document.getElementById("addToCart").addEventListener('click', function() {
 
     // retourne le panier sous forme de tableau
     function getCart() {
-        cart = localStorage.getItem("cart");
-        if (cart != null && Array.isArray(JSON.parse(cart))) {
-            return JSON.parse(cart);
+        let cartStr = localStorage.getItem("cart");
+        if (cartStr != null && Array.isArray(JSON.parse(cartStr))) {
+            return JSON.parse(cartStr);
         } else {
             return [];        
         }
