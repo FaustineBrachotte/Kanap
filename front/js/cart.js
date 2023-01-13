@@ -2,6 +2,16 @@
 let cart = getCart();
 console.log(cart);
 emptyCartMsg(cart);
+let prices = [];
+
+class CartPrices {
+  constructor(id, color, quantity, price) {
+    this.id = id;
+    this.color = color;
+    this.quantity = quantity;
+    this.price = price;
+}
+}
 
 function getCart() {
   let cartStr = localStorage.getItem("cart");
@@ -20,7 +30,7 @@ function emptyCartMsg(cart) {
 }
 
 // affichage des informations des produits contenus dans le panier
-for(const couch of cart){
+for(let couch of cart){
 fetch(`http://localhost:3000/api/products/${couch.id}`)
     .catch(error => console.log("fetch error", error))
     .then(function(res) {
@@ -50,67 +60,66 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
                                                                 </div>
                                                               </div>
                                                             </article>`;
-        //totalCalc(value,couch);
+        
+        prices.push(new CartPrices(couch.id, couch.color, couch.quantity, value.price));
+
         totalQuantity();
         totalPrice();
-        updateQuantity(cart);
-        deleteItem(cart);
-        // order(); 
+        updateQuantity();
+        deleteItem();
 })
 };
 
 
-// calcul de la quantité et du prix total 
-function totalCalcold(value,couch) {                                                    
-  totalPrice += value.price * couch.quantity;
-  document.getElementById("totalPrice").innerText = totalPrice; 
-  totalQuantity += Number(couch.quantity); 
-  document.getElementById("totalQuantity").innerText = totalQuantity; 
+// calcul de la quantité totale
+function totalQuantity() { 
+  let totalQ = 0;
+  for(let i of prices){
+    totalQ += Number(i.quantity);
+    document.getElementById("totalQuantity").innerText = totalQ;
+  }
 } 
 
-function totalQuantity() {  
-  let totalQuantity = 0;
-  const itemQuantity = document.querySelectorAll('.itemQuantity');
-  itemQuantity.forEach((itemQuantity) => {
-    totalQuantity += Number(itemQuantity.value);
-    document.getElementById("totalQuantity").innerText = totalQuantity;
-  })} 
-
+// calcul du prix total
 function totalPrice() {  
-  let totalPrice = 0;
-  const cartItem = document.querySelectorAll('.cart__item');
-  cartItem.forEach((itemPrice) => {
-    itemPrice = document.querySelectorAll('.cart__item__content__description p:nth-of-type(2)');
-    itemPrice.forEach((itemPrice) => {
-      const nbprice = itemPrice.split('');
-      console.log(nbprice);
-    console.log(Split(itemPrice.textContent));
-  })})}   
+  let totalP = 0;
+  for(let i of prices){
+    totalP += Number(i.quantity) * i.price;
+    document.getElementById("totalPrice").innerText = totalP;
+}}
 
 // mise à jour de la quantité du canapé
-function updateQuantity(cart) {
-  const currentQuantity = document.querySelectorAll('.itemQuantity');
-  currentQuantity.forEach((currentQuantity) => {
-    currentQuantity.addEventListener('change', function() {
-      const item = currentQuantity.closest('article');
-      const found = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
-      if (currentQuantity.value <= 0) {
+function updateQuantity() {
+  const inputQuantity = document.querySelectorAll('.itemQuantity');
+  inputQuantity.forEach((inputQuantity) => {
+    inputQuantity.addEventListener('change', function() {
+      const item = inputQuantity.closest('article');
+      const foundPrices = prices.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
+      const foundCart = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
+      if (inputQuantity.value <= 0) {
+        prices = prices.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
         cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
       } else {
-        found.quantity = currentQuantity.value;
+        foundPrices.quantity = inputQuantity.value;
+        foundCart.quantity = inputQuantity.value;
       }
-      saveCart(cart); 
       totalQuantity();
+      totalPrice();
+      console.log(cart);
+      saveCart(cart); 
       }
 )})};
 
 // suppression du canapé
-function deleteItem(cart) {
+function deleteItem() {
   const deleteButton = document.querySelectorAll('.deleteItem');
   deleteButton.forEach((deleteButton) => {
     deleteButton.addEventListener('click', function() {
     const item = deleteButton.closest('article');
+    prices = prices.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
     cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+    totalQuantity();
+    totalPrice();
     saveCart(cart); 
     location.reload();
 })})};
@@ -192,3 +201,26 @@ function checkEmail() {
     }
   })
 }
+
+
+
+
+
+// mise à jour de la quantité du canapé
+// function updateQuantity(cart) {
+//   const inputQuantity = document.querySelectorAll('.itemQuantity');
+//   inputQuantity.forEach((inputQuantity) => {
+//     inputQuantity.addEventListener('change', function() {
+//       const item = inputQuantity.closest('article');
+//       a ++;
+//       console.log("a " + a);
+//       const found = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
+//       if (inputQuantity.value <= 0) {
+//         cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+//       } else {
+//         found.quantity = inputQuantity.value;
+//       }
+//       saveCart(cart); 
+//       updateTotalQuantity();
+//       }
+// )})};                 
