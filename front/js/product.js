@@ -55,6 +55,7 @@ document.getElementById("addToCart").addEventListener('click', function() {
                 addCouch(cart,newCouch);
             }
             saveCart(cart);
+            alert("Le produit a bien été ajouté au panier");
         };
     }
 

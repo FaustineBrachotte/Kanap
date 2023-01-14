@@ -62,12 +62,11 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
                                                             </article>`;
         
         prices.push(new CartPrices(couch.id, couch.color, couch.quantity, value.price));
-
         totalQuantity();
         totalPrice();
         updateQuantity();
         deleteItem();
-})
+  })
 };
 
 
@@ -124,6 +123,7 @@ function deleteItem() {
     location.reload();
 })})};
 
+// sauvegarde du panier dans le localstorage
 function saveCart(cart) {
   localStorage.setItem("cart",JSON.stringify(cart)); 
 }
@@ -131,6 +131,8 @@ function saveCart(cart) {
 
 
 // envoi de la commande
+order();
+test();
 class Contact {
   constructor(firstName, lastName, address, city, email) {
       this.firstName = firstName;
@@ -147,80 +149,146 @@ const address = document.getElementById('address');
 const city = document.getElementById('city');
 const email = document.getElementById('email');
 
-function order() {
-  checkFirstName();
-  checkLastName();
-  checkEmail();
+let contact;
+let cartProductIDs = [];
 
-  document.getElementById('order').addEventListener('clik', function() {
-    checkInputs(firstName, lastName, address, city, email);
-    let contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value)
+
+
+
+function order() {
+
+  document.getElementById('order').addEventListener('mouseover', function() {
+ 
+    if(checkInputs()) {
+    contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value)
     console.log(contact);
-  })
+    productIDs();
+    console.log(cartProductIDs);
+
+    if(checkFormat()) {
+      console.log("c'est tout bon !");
+      const orderBody = {
+        contact: contact,
+        products: cartProductIDs,
+      };
+      console.log(orderBody);
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(orderBody)
+      }
+
+        fetch('http://localhost:3000/api/products/order', options)
+
+        .then((response) => response.json())
+            .then((data) => {           
+                document.location.href = `confirmation.html?orderId=${data.orderId}`;
+                console.log(data.orderId);
+            })
+            .catch((err) => {
+                console.log("fetch error", err);
+                alert ("Un problème a été rencontré lors de l'envoi du formulaire.");
+            });
+            //localStorage.clear();
+        }; 
+      
+    }
+  }  
+  )}
+
+
+// Le tableau des produits envoyé au back-end doit être un array de strings product-ID. 
+function productIDs() {
+  for (let element of cart) {
+    cartProductIDs.push(element.id);
+  }
+}
+
+// vérifie le type des champs et leur présence avant envoi
+function checkFormat() {
+  if(cartProductIDs !== null && cartProductIDs !== "" && contact !== null & contact !== "" && Array.isArray(cartProductIDs) && typeof contact === "object") {
+    return true
+  }
 }
 
 // check des champs du formulaire
 
-function checkInputs(fistName, lastName, address, city, email) {
+function checkInputs() {
   checkFirstName();
   checkLastName();
   checkAddress();
   checkCity();
   checkEmail();
-}
+  return (checkFirstName(),checkLastName(),checkAddress(),checkCity(),checkEmail());
+  }
 
 function checkFirstName() {
-  firstName.addEventListener('change', function() {
-    let mask = /\d/;
+    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
     if(mask.test(firstName.value)) {
-      document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
-    } else {
       document.getElementById('firstNameErrorMsg').innerText = "";
+      return true;
+    } else {
+      document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
+      return false;
     }
-  })
 }
 
 function checkLastName() {
-  lastName.addEventListener('change', function() {
     let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
     if(mask.test(lastName.value)) {
       document.getElementById('lastNameErrorMsg').innerText = "";
+      return true;
     } else {
       document.getElementById('lastNameErrorMsg').innerText = "Veuillez renseigner un nom valide";
+      return false;
     }
-  })
 }
 
+function checkAddress() {
+  let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
+  if(mask.test(address.value)) {
+    document.getElementById('addressErrorMsg').innerText = "";
+    return true;
+  } else {
+    document.getElementById('addressErrorMsg').innerText = "Veuillez renseigner un nom valide";
+    return false;
+  }
+}
+
+function checkCity() {
+  let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
+  if(mask.test(city.value)) {
+    document.getElementById('cityErrorMsg').innerText = "";
+    return true;
+  } else {
+    document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner un nom valide";
+    return false;
+  }
+}
+
+function test() {
+
+  document.getElementById('city').addEventListener('change', function() {
+    let mask = /^[a-zA-Z0-9\s,'-]*$/;
+    if(mask.test(city.value)) {
+      document.getElementById('cityErrorMsg').innerText = "";
+    } else {
+      document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner un nom valide";
+    }
+  }
+) }
+
+
 function checkEmail() {
-  email.addEventListener('change', function() {
     let mask = /^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$/;
     if(mask.test(email.value)) {
       document.getElementById('emailErrorMsg').innerText = "";
+      return true;
     } else {
       document.getElementById('emailErrorMsg').innerText = "Veuillez renseigner une adresse email valide";
+      return false;
     }
-  })
-}
-
-
-
-
-
-// mise à jour de la quantité du canapé
-// function updateQuantity(cart) {
-//   const inputQuantity = document.querySelectorAll('.itemQuantity');
-//   inputQuantity.forEach((inputQuantity) => {
-//     inputQuantity.addEventListener('change', function() {
-//       const item = inputQuantity.closest('article');
-//       a ++;
-//       console.log("a " + a);
-//       const found = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
-//       if (inputQuantity.value <= 0) {
-//         cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
-//       } else {
-//         found.quantity = inputQuantity.value;
-//       }
-//       saveCart(cart); 
-//       updateTotalQuantity();
-//       }
-// )})};                 
+  }         
