@@ -129,10 +129,21 @@ function saveCart(cart) {
 }
 
 
+//___________________________________________________ envoi de la commande ____________________________________________________________
 
-// envoi de la commande
-order();
-test();
+const firstName = document.getElementById('firstName');
+const lastName = document.getElementById('lastName');
+const address = document.getElementById('address');
+const city = document.getElementById('city');
+const email = document.getElementById('email');
+
+let contact;
+let cartProductIDs = [];
+let isFirstNameOK = false;
+let isLastNameOK = false;
+let isAddressOK = false;
+let isCityOK = false;
+let isEmailOK = false;
 class Contact {
   constructor(firstName, lastName, address, city, email) {
       this.firstName = firstName;
@@ -143,62 +154,64 @@ class Contact {
   }
 }
 
-const firstName = document.getElementById('firstName');
-const lastName = document.getElementById('lastName');
-const address = document.getElementById('address');
-const city = document.getElementById('city');
-const email = document.getElementById('email');
-
-let contact;
-let cartProductIDs = [];
-
-
+order();
+resetFields();
+checkInputs();
+test();
 
 
 function order() {
 
-  document.getElementById('order').addEventListener('mouseover', function() {
+  document.getElementById('order').addEventListener('click', function(event) {
+    event.preventDefault(); // empêche le rechargement de la page
  
-    if(checkInputs()) {
-    contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value)
-    console.log(contact);
-    productIDs();
-    console.log(cartProductIDs);
-
-    if(checkFormat()) {
-      console.log("c'est tout bon !");
-      const orderBody = {
-        contact: contact,
-        products: cartProductIDs,
-      };
-      console.log(orderBody);
-
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify(orderBody)
-      }
-
-        fetch('http://localhost:3000/api/products/order', options)
-
-        .then((response) => response.json())
-            .then((data) => {           
-                document.location.href = `confirmation.html?orderId=${data.orderId}`;
-                console.log(data.orderId);
-            })
-            .catch((err) => {
-                console.log("fetch error", err);
-                alert ("Un problème a été rencontré lors de l'envoi du formulaire.");
-            });
-            //localStorage.clear();
-        }; 
+    if(isFirstNameOK && isLastNameOK && isAddressOK && isCityOK && isEmailOK) {
       
+      contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value)
+      productIDs();
+
+      if(checkFormat()) {
+        console.log("c'est tout bon !");
+        const orderBody = {
+          contact: contact,
+          products: cartProductIDs,
+        };
+        console.log(orderBody);
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(orderBody)
+        }
+          fetch('http://localhost:3000/api/products/order', options)
+
+          .then((response) => response.json())
+              .then((data) => {           
+                  document.location.href = `confirmation.html?orderId=${data.orderId}`;
+                  console.log(data.orderId);
+              })
+              .catch((err) => {
+                  console.log("fetch error", err);
+                  alert("Un problème a été rencontré lors de l'envoi du formulaire.");
+              });
+              //localStorage.clear();
+      }
+    } else {
+      //alert("Veuillez compléter les champs du formulaire.");
+      console.log("Veuillez compléter les champs du formulaire.");
     }
   }  
   )}
 
+// Vide les champs du formulaire au chargement de la page
+function resetFields() {
+  firstName.value = "";
+  lastName.value = "";
+  address.value = "";
+  city.value = "";
+  email.value = "";
+}  
 
 // Le tableau des produits envoyé au back-end doit être un array de strings product-ID. 
 function productIDs() {
@@ -209,8 +222,8 @@ function productIDs() {
 
 // vérifie le type des champs et leur présence avant envoi
 function checkFormat() {
-  if(cartProductIDs !== null && cartProductIDs !== "" && contact !== null & contact !== "" && Array.isArray(cartProductIDs) && typeof contact === "object") {
-    return true
+ if(cartProductIDs !== null && cartProductIDs !== "" && contact !== null & contact !== "" && Array.isArray(cartProductIDs) && typeof contact === "object") {  
+      return true
   }
 }
 
@@ -222,51 +235,58 @@ function checkInputs() {
   checkAddress();
   checkCity();
   checkEmail();
-  return (checkFirstName(),checkLastName(),checkAddress(),checkCity(),checkEmail());
-  }
+}
 
 function checkFirstName() {
-    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
-    if(mask.test(firstName.value)) {
-      document.getElementById('firstNameErrorMsg').innerText = "";
-      return true;
-    } else {
-      document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
-      return false;
-    }
+  document.getElementById('firstName').addEventListener('change', function() {
+  let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
+  if(mask.test(firstName.value)) {
+    document.getElementById('firstNameErrorMsg').innerText = "";
+    isFirstNameOK = true;
+  } else {
+    document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
+    isFirstNameOK = false;
+  }
+}) 
 }
 
 function checkLastName() {
+  document.getElementById('lastName').addEventListener('change', function() {
     let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
     if(mask.test(lastName.value)) {
       document.getElementById('lastNameErrorMsg').innerText = "";
-      return true;
+      isLastNameOK = true;
     } else {
       document.getElementById('lastNameErrorMsg').innerText = "Veuillez renseigner un nom valide";
-      return false;
+      isLastNameOK = false;
     }
+}) 
 }
 
 function checkAddress() {
-  let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
-  if(mask.test(address.value)) {
-    document.getElementById('addressErrorMsg').innerText = "";
-    return true;
-  } else {
-    document.getElementById('addressErrorMsg').innerText = "Veuillez renseigner un nom valide";
-    return false;
-  }
+  document.getElementById('address').addEventListener('change', function() {
+    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
+    if(mask.test(address.value)) {
+      document.getElementById('addressErrorMsg').innerText = "";
+      isAddressOK = true;
+    } else {
+      document.getElementById('addressErrorMsg').innerText = "Veuillez renseigner une adresse valide";
+      isAddressOK = false;
+    }
+}) 
 }
 
 function checkCity() {
-  let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
-  if(mask.test(city.value)) {
-    document.getElementById('cityErrorMsg').innerText = "";
-    return true;
-  } else {
-    document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner un nom valide";
-    return false;
-  }
+  document.getElementById('city').addEventListener('change', function() {
+    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûü]+[ \-']?]*[a-zàáâäçèéêëìíîïñòóôöùúûü]+$/;
+    if(mask.test(city.value)) {
+      document.getElementById('cityErrorMsg').innerText = "";
+      isCityOK = true;
+    } else {
+      document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner une ville valide";
+      isCityOK = false;
+    }
+}) 
 }
 
 function test() {
@@ -276,19 +296,20 @@ function test() {
     if(mask.test(city.value)) {
       document.getElementById('cityErrorMsg').innerText = "";
     } else {
-      document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner un nom valide";
+      document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner une ville valide";
     }
   }
 ) }
 
-
 function checkEmail() {
+  document.getElementById('email').addEventListener('change', function() {
     let mask = /^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$/;
     if(mask.test(email.value)) {
       document.getElementById('emailErrorMsg').innerText = "";
-      return true;
+      isEmailOK = true;
     } else {
       document.getElementById('emailErrorMsg').innerText = "Veuillez renseigner une adresse email valide";
-      return false;
+      isEmailOK = false;
     }
-  }         
+  } ) 
+}        
