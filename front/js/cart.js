@@ -2,7 +2,7 @@
 let cart = getCart();
 console.log(cart);
 emptyCartMsg(cart);
-let prices = [];
+getItems();
 
 class CartPrices {
   constructor(id, color, quantity, price) {
@@ -30,6 +30,7 @@ function emptyCartMsg(cart) {
 }
 
 // affichage des informations des produits contenus dans le panier
+function getItems() {
 for(let couch of cart){
 fetch(`http://localhost:3000/api/products/${couch.id}`)
     .catch(error => console.log("fetch error", error))
@@ -60,32 +61,52 @@ fetch(`http://localhost:3000/api/products/${couch.id}`)
                                                                 </div>
                                                               </div>
                                                             </article>`;
-        
-        prices.push(new CartPrices(couch.id, couch.color, couch.quantity, value.price));
         totalQuantity();
         totalPrice();
         updateQuantity();
         deleteItem();
   })
-};
+}};
 
+
+
+// requête l'API pour connaître le prix du canapé dont la quantité a été modifiée
+async function getPrice(itemID) {
+  const response = await fetch(`http://localhost:3000/api/products/${itemID}`);
+  const data = await response.json();
+  return data;
+}
 
 // calcul de la quantité totale
-function totalQuantity() { 
-  let totalQ = 0;
-  for(let i of prices){
-    totalQ += Number(i.quantity);
-    document.getElementById("totalQuantity").innerText = totalQ;
-  }
-} 
+function totalQuantity() {  
+  let totalQuantity = 0;  
+  const itemQuantity = document.querySelectorAll('.itemQuantity');
+  itemQuantity.forEach((itemQuantity) => {
+    const item = itemQuantity.closest('article');
+    if (item.style.display != 'none') {
+    totalQuantity += Number(itemQuantity.value);
+    document.getElementById("totalQuantity").innerText = totalQuantity;
+    }
+  })
+}
+
 
 // calcul du prix total
 function totalPrice() {  
-  let totalP = 0;
-  for(let i of prices){
-    totalP += Number(i.quantity) * i.price;
-    document.getElementById("totalPrice").innerText = totalP;
-}}
+  let totalPrice = 0;
+  const itemQ = document.querySelectorAll('.itemQuantity');
+  itemQ.forEach(async function(itemQ){
+    const item = itemQ.closest('article');
+    const itemID = item.dataset.id;
+    if (item.style.display != 'none') {
+    getPrice(itemID).then(value => {
+      totalPrice += value.price * itemQ.value;
+      document.getElementById("totalPrice").innerText = totalPrice;
+    });
+  }
+  });
+}
+
 
 // mise à jour de la quantité du canapé
 function updateQuantity() {
@@ -93,19 +114,16 @@ function updateQuantity() {
   inputQuantity.forEach((inputQuantity) => {
     inputQuantity.addEventListener('change', function() {
       const item = inputQuantity.closest('article');
-      const foundPrices = prices.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
       const foundCart = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
       if (inputQuantity.value <= 0) {
-        prices = prices.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
         cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+        totalQuantity();
         item.style.display = 'none';
       } else {
-        foundPrices.quantity = inputQuantity.value;
         foundCart.quantity = inputQuantity.value;
       }
       totalQuantity();
       totalPrice();
-      console.log(cart);
       saveCart(cart); 
       }
 )})};
@@ -116,12 +134,11 @@ function deleteItem() {
   deleteButton.forEach((deleteButton) => {
     deleteButton.addEventListener('click', function() {
     const item = deleteButton.closest('article');
-    prices = prices.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
     cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+    item.style.display = 'none';
     totalQuantity();
     totalPrice();
-    saveCart(cart); 
-    item.style.display = 'none';
+    saveCart(cart);
 })})};
 
 // sauvegarde du panier dans le localstorage
