@@ -98,6 +98,7 @@ function updateQuantity() {
       if (inputQuantity.value <= 0) {
         prices = prices.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
         cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+        item.style.display = 'none';
       } else {
         foundPrices.quantity = inputQuantity.value;
         foundCart.quantity = inputQuantity.value;
@@ -120,7 +121,7 @@ function deleteItem() {
     totalQuantity();
     totalPrice();
     saveCart(cart); 
-    location.reload();
+    item.style.display = 'none';
 })})};
 
 // sauvegarde du panier dans le localstorage
@@ -171,7 +172,6 @@ function order() {
       productIDs();
 
       if(checkFormat()) {
-        console.log("c'est tout bon !");
         const orderBody = {
           contact: contact,
           products: cartProductIDs,
@@ -189,7 +189,6 @@ function order() {
           .then((response) => response.json())
               .then((data) => {           
                   document.location.href = `confirmation.html?orderId=${data.orderId}`;
-                  console.log(data.orderId);
               })
               .catch((err) => {
                   console.log("fetch error", err);
@@ -198,8 +197,7 @@ function order() {
               //localStorage.clear();
       }
     } else {
-      //alert("Veuillez compléter les champs du formulaire.");
-      console.log("Veuillez compléter les champs du formulaire.");
+      alert("Veuillez compléter les champs du formulaire.");
     }
   }  
   )}
