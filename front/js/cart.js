@@ -107,15 +107,19 @@ function updateQuantity() {
     inputQuantity.addEventListener('change', function () {
       const item = inputQuantity.closest('article');
       const foundCart = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
-      if (inputQuantity.value <= 0) {
-        cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
-        item.style.display = 'none';
+      if (inputQuantity.value < 100) {
+        if (inputQuantity.value <= 0) {
+          cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
+          item.style.display = 'none';
+        } else {
+          foundCart.quantity = inputQuantity.value;
+        }
+        totalQuantity();
+        totalPrice();
+        saveCart();
       } else {
-        foundCart.quantity = inputQuantity.value;
+        alert("Veuillez choisir une quantité entre 1 et 100");
       }
-      totalQuantity();
-      totalPrice();
-      saveCart();
     }
     )
   })
@@ -267,8 +271,10 @@ function order() {
     alert("Votre panier est vide")
   } else {
 
+    // vérifie si tous les champs sont complétés correctement
     if (isFirstNameOK && isLastNameOK && isAddressOK && isCityOK && isEmailOK) {
 
+      // créé l'object contact
       let contact = new Contact(firstName.value, lastName.value, address.value, city.value, email.value);
       productIDs();
 
@@ -297,7 +303,7 @@ function order() {
         localStorage.clear();
       }
     } else {
-      alert("Veuillez compléter les champs du formulaire.");
+      alert("Veuillez vérifier les champs du formulaire.");
     }
   }
 }  

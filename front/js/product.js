@@ -1,10 +1,12 @@
+ //___________________________________________ affichage des informations produit ____________________________________________________
+ 
  // récupération de l'id produit depuis l'url
 let str = window.location.href;
 let url = new URL(str);
 let productId = url.searchParams.get("id");
 
 
-// affichage des données produit
+// affichage des informations pour le produit sélectionné
 fetch(`http://localhost:3000/api/products/${productId}`)
     .catch(error => console.log("fetch error", error))
     .then(data => data.json())
@@ -26,7 +28,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     });
 
 
-// ajout du canapé sélectionné au panier
+//_____________________________________________________ ajout au panier ____________________________________________________________
 class Couch {
     constructor(id, color, quantity) {
         this.id = id;
@@ -35,12 +37,12 @@ class Couch {
     }
 }
 
-  
-// appelle la fonction addToCart au clic sur le bouton "Ajouter au panier"
+// appelle la fonction addToCart() au clic sur le bouton "Ajouter au panier"
 document.getElementById("addToCart").addEventListener('click', function () {
     addToCart();
 });
 
+// ajout du canapé dans le panier
 function addToCart() {
     const color = document.getElementById("colors").value;
     const quantity = document.getElementById("quantity").value;
@@ -67,7 +69,7 @@ function checkInputs(color, quantity) {
     return true;
 }
 
-// retourne le panier sous forme de tableau
+// retourne le panier existant sous forme de tableau
 function getCart() {
     let cartStr = localStorage.getItem("cart");
     if (cartStr != null && Array.isArray(JSON.parse(cartStr))) {
