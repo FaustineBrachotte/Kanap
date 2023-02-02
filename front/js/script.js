@@ -1,10 +1,19 @@
-// récupération de la liste des produits
+//_______________________________________________ Affichage de la liste des produits ______________________________________________________
+
+/**
+ * @class
+ * @classdesc Créée un nouveau produit avec les propriétés reçues de l'API
+ */
 class Product {
     constructor(jsonProduct) {
         jsonProduct && Object.assign(this, jsonProduct);
     }
 }
 
+/**
+ * Insère chaque produit reçu de l'API dans le DOM avec fetch
+ * @returns {Promise}
+ */
 fetch("http://localhost:3000/api/products")
     .catch(error => console.log("fetch error", error))
     .then(data => data.json())
