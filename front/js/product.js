@@ -9,7 +9,6 @@ let productId = url.searchParams.get("id");
 /**
  * Insère les informations reçues de l'API dans le DOM pour le produit sélectionné
  * @param {String} productId
- * @return {Promise} + ?
  */
 fetch(`http://localhost:3000/api/products/${productId}`)
     .catch(error => console.log("fetch error", error))
@@ -87,7 +86,7 @@ function checkInputs(color, quantity) {
 
 /**
  * Récupère le contenu du localstorage et le retourne sous forme de tableau
- * @returns {Array}
+ * @returns {Array} An empty array or an array of objects
  */
 function getCart() {
     let cartStr = localStorage.getItem("cart");

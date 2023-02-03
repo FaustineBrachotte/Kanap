@@ -1,8 +1,19 @@
 //________________________________________________________ Gestion du panier _______________________________________________________________
-/**
- * Récupération du panier depuis le localstorage
- */
+
 let cart = getCart();
+
+/**
+ * Récupère le contenu du localstorage
+ * @returns {Array} An empty array or an array of objects
+ */
+ function getCart() {
+  let cartStr = localStorage.getItem("cart");
+  if (cartStr != null && Array.isArray(JSON.parse(cartStr))) {
+    return JSON.parse(cartStr);
+  } else {
+    return [];
+  }
+}
 
 /**
  * Vérifie si le panier est vide
@@ -14,20 +25,7 @@ if (cart.length < 1) {
 }
 
 /**
- * Récupère le contenu du localstorage et le retourne sous forme de tableau
- * @returns {Array}
- */
-function getCart() {
-  let cartStr = localStorage.getItem("cart");
-  if (cartStr != null && Array.isArray(JSON.parse(cartStr))) {
-    return JSON.parse(cartStr);
-  } else {
-    return [];
-  }
-}
-
-/**
- * Affiche un message et une quantité et un prix total à 0
+ * Modifie le titre du panier et affiche une quantité et un prix total à 0
  */
 function emptyCart() {
     document.querySelector("#cartAndFormContainer > h1").innerText = "Votre panier est vide";
@@ -38,7 +36,6 @@ function emptyCart() {
 /**
  * Insère les informations reçues de l'API dans le DOM pour les produits présents dans le panier
  * @param {String} item.id
- * @return {Promise} + ?
  */
 function getItems() {
   for (let item of cart) {
@@ -112,8 +109,9 @@ function totalPrice() {
 
 /**
  * Requête l'API pour connaître le prix du canapé dont la quantité a été modifiée
+ * @async
  * @param {String} itemID
- * @return {Promise} + ?
+ * @return {Promise<Object>}
  */
 async function getPrice(itemID) {
   const response = await fetch(`http://localhost:3000/api/products/${itemID}`);
