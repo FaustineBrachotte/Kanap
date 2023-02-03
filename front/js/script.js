@@ -1,5 +1,4 @@
 //_______________________________________________ Affichage de la liste des produits ______________________________________________________
-
 /**
  * @class
  * @classdesc Créée un nouveau produit avec les propriétés reçues de l'API
@@ -11,8 +10,7 @@ class Product {
 }
 
 /**
- * Insère chaque produit reçu de l'API dans le DOM avec fetch
- * @returns {Promise}
+ * Insère les informations de chaque produit reçu de l'API dans le DOM
  */
 fetch("http://localhost:3000/api/products")
     .catch(error => console.log("fetch error", error))

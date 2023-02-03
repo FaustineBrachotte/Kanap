@@ -85,7 +85,7 @@ function checkInputs(color, quantity) {
 }
 
 /**
- * Récupère le contenu du localstorage et le retourne sous forme de tableau
+ * Récupère le contenu du localstorage
  * @returns {Array} An empty array or an array of objects
  */
 function getCart() {
