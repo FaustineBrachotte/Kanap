@@ -19,13 +19,13 @@ fetch(`http://localhost:3000/api/products/${productId}`)
         document.getElementById("price").innerText = value.price;
         document.getElementById("description").innerText = value.description;
         const colorList = value.colors;
-        const selectColors = document.getElementById("colors");
+        const displayedColors = document.getElementById("colors");
         let color;
         for (let i of colorList) {
             color = document.createElement("option");
             color.setAttribute("value", i);
             color.innerText = i;
-            selectColors.appendChild(color);
+            displayedColors.appendChild(color);
         }
     });
 
@@ -61,10 +61,10 @@ function addToCart() {
         let cart = getCart();
         if (!isInCart(cart, newCouch)) {
             addCouch(cart, newCouch);
+            saveCart(cart);
+            alert("Le produit a bien été ajouté");
         }
-        saveCart(cart);
-        alert("Le produit a bien été ajouté");
-    };
+    }
 }
 
 /**
@@ -98,8 +98,7 @@ function getCart() {
 }
 
 /**
- * Compare le nouveau canapé avec le contenu du panier
- * Incrémente la quantité si le canapé existe déjà dans le panier
+ * Compare le nouveau canapé avec le contenu du panier et incrémente la quantité si le canapé existe déjà
  * @param {Array} cart 
  * @param {Object} newCouch 
  * @returns {Boolean}
@@ -108,12 +107,19 @@ function isInCart(cart, newCouch) {
     let i = 0;
     while (i < cart.length) {
         if (cart[i].id == newCouch.id && cart[i].color == newCouch.color) {
-            cart[i].quantity = Number(cart[i].quantity) + Number(newCouch.quantity);
-            return true;
+            if (Number(cart[i].quantity) + Number(newCouch.quantity) > 100) {
+                alert("Le produit ne peut pas être ajouté car la quantité totale contenue dans le panier doit être inférieure ou égale à 100.");
+                return true;
+            } else {
+                cart[i].quantity = Number(cart[i].quantity) + Number(newCouch.quantity);
+                saveCart(cart);
+                alert("Le produit a bien été ajouté");
+                return true;
+            }
         }
-        i++
+        i++;
     }
-    return false
+    return false;
 }
 
 /**

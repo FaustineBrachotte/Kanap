@@ -6,7 +6,7 @@ let cart = getCart();
  * Récupère le contenu du localstorage
  * @returns {Array} An empty array or an array of objects
  */
- function getCart() {
+function getCart() {
   let cartStr = localStorage.getItem("cart");
   if (cartStr != null && Array.isArray(JSON.parse(cartStr))) {
     return JSON.parse(cartStr);
@@ -28,10 +28,10 @@ if (cart.length < 1) {
  * Modifie le titre du panier et affiche une quantité et un prix total à 0
  */
 function emptyCart() {
-    document.querySelector("#cartAndFormContainer > h1").innerText = "Votre panier est vide";
-    document.getElementById("totalQuantity").innerText = 0;
-    document.getElementById("totalPrice").innerText = 0;
-  }
+  document.querySelector("#cartAndFormContainer > h1").innerText = "Votre panier est vide";
+  document.getElementById("totalQuantity").innerText = 0;
+  document.getElementById("totalPrice").innerText = 0;
+}
 
 /**
  * Insère les informations reçues de l'API dans le DOM pour les produits présents dans le panier
@@ -68,7 +68,7 @@ function getItems() {
         totalPrice();
         updateQuantity();
         deleteItem();
-      })
+      });
   }
 }
 
@@ -85,7 +85,7 @@ function totalQuantity() {
       totalQuantity += Number(itemQuantity.value);
       document.getElementById("totalQuantity").innerText = totalQuantity;
     }
-  })
+  });
 }
 
 /**
@@ -226,41 +226,41 @@ function resetFields() {
  * * @returns {Boolean}
  */
 function checkFirstName() {
-    if (regexNames.test(firstName.value)) {
-      document.getElementById('firstNameErrorMsg').innerText = "";
-      isFirstNameOK = true;
-    } else {
-      document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
-      isFirstNameOK = false;
-    }
+  if (regexNames.test(firstName.value)) {
+    document.getElementById('firstNameErrorMsg').innerText = "";
+    isFirstNameOK = true;
+  } else {
+    document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
+    isFirstNameOK = false;
   }
+}
 
 /**
  * Vérifie si les informations saisies dans le champ "Nom" sont correctes
  * * @returns {Boolean}
  */
 function checkLastName() {
-    if (regexNames.test(lastName.value)) {
-      document.getElementById('lastNameErrorMsg').innerText = "";
-      isLastNameOK = true;
-    } else {
-      document.getElementById('lastNameErrorMsg').innerText = "Veuillez renseigner un nom valide";
-      isLastNameOK = false;
-    }
+  if (regexNames.test(lastName.value)) {
+    document.getElementById('lastNameErrorMsg').innerText = "";
+    isLastNameOK = true;
+  } else {
+    document.getElementById('lastNameErrorMsg').innerText = "Veuillez renseigner un nom valide";
+    isLastNameOK = false;
   }
+}
 
 /**
  * Vérifie si les informations saisies dans le champ "Adresse" sont correctes (non vide)
  * * @returns {Boolean}
  */
 function checkAddress() {
-    if (address.value !== "") {
-      document.getElementById('addressErrorMsg').innerText = "";
-      isAddressOK = true;
-    } else {
-      document.getElementById('addressErrorMsg').innerText = "Veuillez renseigner une adresse valide";
-      isAddressOK = false;
-    }
+  if (address.value !== "") {
+    document.getElementById('addressErrorMsg').innerText = "";
+    isAddressOK = true;
+  } else {
+    document.getElementById('addressErrorMsg').innerText = "Veuillez renseigner une adresse valide";
+    isAddressOK = false;
+  }
 }
 
 /**
@@ -268,13 +268,13 @@ function checkAddress() {
  * * @returns {Boolean}
  */
 function checkCity() {
-    if (regexNames.test(city.value)) {
-      document.getElementById('cityErrorMsg').innerText = "";
-      isCityOK = true;
-    } else {
-      document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner une ville valide";
-      isCityOK = false;
-    }
+  if (regexNames.test(city.value)) {
+    document.getElementById('cityErrorMsg').innerText = "";
+    isCityOK = true;
+  } else {
+    document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner une ville valide";
+    isCityOK = false;
+  }
 }
 
 /**
@@ -282,13 +282,13 @@ function checkCity() {
  * * @returns {Boolean}
  */
 function checkEmail() {
-    if (regexEmail.test(email.value)) {
-      document.getElementById('emailErrorMsg').innerText = "";
-      isEmailOK = true;
-    } else {
-      document.getElementById('emailErrorMsg').innerText = "Veuillez renseigner une adresse email valide";
-      isEmailOK = false;
-    }
+  if (regexEmail.test(email.value)) {
+    document.getElementById('emailErrorMsg').innerText = "";
+    isEmailOK = true;
+  } else {
+    document.getElementById('emailErrorMsg').innerText = "Veuillez renseigner une adresse email valide";
+    isEmailOK = false;
+  }
 }
 
 /**
@@ -296,7 +296,7 @@ function checkEmail() {
  */
 document.getElementById('order').addEventListener('click', (event) => {
   order(event);
-})
+});
 
 /**
  * Envoie la commande au back-end
@@ -307,7 +307,7 @@ function order(event) {
 
   // vérifie si le panier est vide
   if (cart.length < 1) {
-    alert("Votre panier est vide !")
+    alert("Votre panier est vide !");
   } else {
 
     // vérifie si tous les champs sont complétés correctement
@@ -327,9 +327,8 @@ function order(event) {
             'Content-Type': 'application/json;charset=utf-8'
           },
           body: JSON.stringify(orderBody)
-        }
+        };
         fetch('http://localhost:3000/api/products/order', options)
-
           .then((response) => response.json())
           .then((data) => {
             document.location.href = `confirmation.html?orderId=${data.orderId}`;
@@ -361,6 +360,6 @@ function productIDs() {
  */
 function checkFormat(cartProductIDs, contact) {
   if (cartProductIDs != null && cartProductIDs !== "" && contact != null & contact !== "" && Array.isArray(cartProductIDs) && typeof contact === "object") {
-    return true
+    return true;
   }
 }
