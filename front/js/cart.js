@@ -135,6 +135,10 @@ function updateQuantity() {
       } else {
         alert("Veuillez choisir une quantité entre 1 et 100");
         inputQuantity.value = 1;
+        foundCart.quantity = inputQuantity.value;
+        totalQuantity();
+        totalPrice();
+        saveCart();
       }
     }
     )
@@ -173,8 +177,8 @@ const lastName = document.getElementById('lastName');
 const address = document.getElementById('address');
 const city = document.getElementById('city');
 const email = document.getElementById('email');
-
-resetFields();
+const regexNames = /^[A-Za-z'àâéèêôùûçÀÂÉÈÔÙÛÇ\s-]{2,50}$/;
+const regexEmail = /^[\w\.-]+@[\w\.-]+\.[\w]{2,3}$/;
 
 let cartProductIDs = [];
 let isFirstNameOK = false;
@@ -203,6 +207,7 @@ class Contact {
   }
 }
 
+resetFields();
 
 /**
  * Vide les champs du formulaire au chargement de la page
@@ -210,7 +215,7 @@ class Contact {
 function resetFields() {
   firstName.value = "";
   lastName.value = "";
-  //address.value = "";
+  address.value = "";
   city.value = "";
   email.value = "";
 }
@@ -221,8 +226,7 @@ function resetFields() {
  * * @returns {Boolean}
  */
 function checkFirstName() {
-    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+$/;
-    if (mask.test(firstName.value)) {
+    if (regexNames.test(firstName.value)) {
       document.getElementById('firstNameErrorMsg').innerText = "";
       isFirstNameOK = true;
     } else {
@@ -236,8 +240,7 @@ function checkFirstName() {
  * * @returns {Boolean}
  */
 function checkLastName() {
-    let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+$/;
-    if (mask.test(lastName.value)) {
+    if (regexNames.test(lastName.value)) {
       document.getElementById('lastNameErrorMsg').innerText = "";
       isLastNameOK = true;
     } else {
@@ -247,7 +250,7 @@ function checkLastName() {
   }
 
 /**
- * Vérifie si les informations saisies dans le champ "Adresse" sont correctes
+ * Vérifie si les informations saisies dans le champ "Adresse" sont correctes (non vide)
  * * @returns {Boolean}
  */
 function checkAddress() {
@@ -265,16 +268,13 @@ function checkAddress() {
  * * @returns {Boolean}
  */
 function checkCity() {
-  city.addEventListener('change', function () {
-    let mask = /^([A-Za-z'àâéèêôùûçÀÂÉÈÔÙÛÇ\s-]{2,50})$/;
-    if (mask.test(city.value)) {
+    if (regexNames.test(city.value)) {
       document.getElementById('cityErrorMsg').innerText = "";
       isCityOK = true;
     } else {
       document.getElementById('cityErrorMsg').innerText = "Veuillez renseigner une ville valide";
       isCityOK = false;
     }
-  })
 }
 
 /**
@@ -282,8 +282,7 @@ function checkCity() {
  * * @returns {Boolean}
  */
 function checkEmail() {
-    let mask = /^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$/;
-    if (mask.test(email.value)) {
+    if (regexEmail.test(email.value)) {
       document.getElementById('emailErrorMsg').innerText = "";
       isEmailOK = true;
     } else {
@@ -295,14 +294,14 @@ function checkEmail() {
 /**
  * Appel de la fonction order() au clic sur le bouton "Commander"
  */
-document.getElementById('order').addEventListener('click', () => {
-  order();
+document.getElementById('order').addEventListener('click', (event) => {
+  order(event);
 })
 
 /**
  * Envoie la commande au back-end
  */
-function order() {
+function order(event) {
 
   event.preventDefault(); // empêche le rechargement de la page
 

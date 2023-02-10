@@ -2,9 +2,9 @@
 /**
  * Récupération de l'id produit depuis l'url
  */
-let str = window.location.href;
-let url = new URL(str);
-let productId = url.searchParams.get("id");
+const str = window.location.href;
+const url = new URL(str);
+const productId = url.searchParams.get("id");
 
 /**
  * Insère les informations reçues de l'API dans le DOM pour le produit sélectionné

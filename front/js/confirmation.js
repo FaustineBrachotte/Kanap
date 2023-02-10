@@ -2,9 +2,9 @@
 /**
  * Récupération du numéro de commande depuis l'url
  */
-let str = window.location.href;
-let url = new URL(str);
-let orderId = url.searchParams.get("orderId");
+const str = window.location.href;
+const url = new URL(str);
+const orderId = url.searchParams.get("orderId");
 
 /**
  * Affichage du numéro dans le DOM
