@@ -70,7 +70,7 @@ function getItems() {
         deleteItem();
       })
   }
-};
+}
 
 /**
  * Calcule la quantité totale des articles présents dans le panier
@@ -115,8 +115,7 @@ function totalPrice() {
  */
 async function getPrice(itemID) {
   const response = await fetch(`http://localhost:3000/api/products/${itemID}`);
-  const data = await response.json();
-  return data;
+  return await response.json();
 }
 
 /**
@@ -135,11 +134,12 @@ function updateQuantity() {
         saveCart();
       } else {
         alert("Veuillez choisir une quantité entre 1 et 100");
+        inputQuantity.value = 1;
       }
     }
     )
-  })
-};
+  });
+}
 
 /**
  * Supprime un article du panier
@@ -155,8 +155,8 @@ function deleteItem() {
       totalPrice();
       saveCart();
     })
-  })
-};
+  });
+}
 
 /**
  * Sauvegarde le panier dans le localstorage
@@ -174,12 +174,20 @@ const address = document.getElementById('address');
 const city = document.getElementById('city');
 const email = document.getElementById('email');
 
+resetFields();
+
 let cartProductIDs = [];
 let isFirstNameOK = false;
 let isLastNameOK = false;
 let isAddressOK = false;
 let isCityOK = false;
 let isEmailOK = false;
+
+firstName.addEventListener('change', checkFirstName);
+lastName.addEventListener('change', checkLastName);
+address.addEventListener('change', checkAddress);
+city.addEventListener('change', checkCity);
+email.addEventListener('change', checkEmail);
 
 /**
  * @class
@@ -195,7 +203,6 @@ class Contact {
   }
 }
 
-resetFields();
 
 /**
  * Vide les champs du formulaire au chargement de la page
@@ -203,30 +210,17 @@ resetFields();
 function resetFields() {
   firstName.value = "";
   lastName.value = "";
-  address.value = "";
+  //address.value = "";
   city.value = "";
   email.value = "";
 }
 
-checkInputs();
-
-/**
- * Vérifie si les informations saisies dans les différents champs du formulaire sont valides
- */
-function checkInputs() {
-  checkFirstName();
-  checkLastName();
-  checkAddress();
-  checkCity();
-  checkEmail();
-}
 
 /**
  * Vérifie si les informations saisies dans le champ "Prénom" sont correctes
  * * @returns {Boolean}
  */
 function checkFirstName() {
-  firstName.addEventListener('change', function () {
     let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+$/;
     if (mask.test(firstName.value)) {
       document.getElementById('firstNameErrorMsg').innerText = "";
@@ -235,15 +229,13 @@ function checkFirstName() {
       document.getElementById('firstNameErrorMsg').innerText = "Veuillez renseigner un prénom valide";
       isFirstNameOK = false;
     }
-  })
-}
+  }
 
 /**
  * Vérifie si les informations saisies dans le champ "Nom" sont correctes
  * * @returns {Boolean}
  */
 function checkLastName() {
-  lastName.addEventListener('change', function () {
     let mask = /^[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+[ \-']?[[a-zàáâäçèéêëìíîïñòóôöùúûüA-ZÂÊÎÔÛÄËÏÖÜÀÇÉÈÙ]+$/;
     if (mask.test(lastName.value)) {
       document.getElementById('lastNameErrorMsg').innerText = "";
@@ -252,15 +244,13 @@ function checkLastName() {
       document.getElementById('lastNameErrorMsg').innerText = "Veuillez renseigner un nom valide";
       isLastNameOK = false;
     }
-  })
-}
+  }
 
 /**
  * Vérifie si les informations saisies dans le champ "Adresse" sont correctes
  * * @returns {Boolean}
  */
 function checkAddress() {
-  address.addEventListener('change', function () {
     if (address.value !== "") {
       document.getElementById('addressErrorMsg').innerText = "";
       isAddressOK = true;
@@ -268,7 +258,6 @@ function checkAddress() {
       document.getElementById('addressErrorMsg').innerText = "Veuillez renseigner une adresse valide";
       isAddressOK = false;
     }
-  })
 }
 
 /**
@@ -293,7 +282,6 @@ function checkCity() {
  * * @returns {Boolean}
  */
 function checkEmail() {
-  email.addEventListener('change', function () {
     let mask = /^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$/;
     if (mask.test(email.value)) {
       document.getElementById('emailErrorMsg').innerText = "";
@@ -302,7 +290,6 @@ function checkEmail() {
       document.getElementById('emailErrorMsg').innerText = "Veuillez renseigner une adresse email valide";
       isEmailOK = false;
     }
-  })
 }
 
 /**
