@@ -4,7 +4,7 @@ let cart = getCart();
 
 /**
  * Récupère le contenu du localstorage
- * @returns {Array} An empty array or an array of objects
+ * @returns {Array} Un tableau vide ou un tableau d'objets
  */
 function getCart() {
   let cartStr = localStorage.getItem("cart");
@@ -108,7 +108,7 @@ function totalPrice() {
 }
 
 /**
- * Requête l'API pour connaître le prix du canapé dont la quantité a été modifiée
+ * Requête l'API pour connaître le prix du canapé
  * @async
  * @param {String} itemID
  * @return {Promise<Object>}
@@ -119,27 +119,24 @@ async function getPrice(itemID) {
 }
 
 /**
- * Mets à jour la quantité totale des articles présents dans le panier
+ * Mise à jour de la quantité des articles contenus dans le panier
  */
 function updateQuantity() {
   const inputQuantity = document.querySelectorAll('.itemQuantity');
   inputQuantity.forEach((inputQuantity) => {
-    inputQuantity.addEventListener('change', function () {
+    inputQuantity.addEventListener('change', () => {
       const item = inputQuantity.closest('article');
       const foundCart = cart.find(element => element.id == item.dataset.id && element.color == item.dataset.color);
       if (inputQuantity.value > 0 && inputQuantity.value <= 100) {
         foundCart.quantity = inputQuantity.value;
-        totalQuantity();
-        totalPrice();
-        saveCart();
       } else {
         alert("Veuillez choisir une quantité entre 1 et 100");
         inputQuantity.value = 1;
         foundCart.quantity = inputQuantity.value;
-        totalQuantity();
-        totalPrice();
-        saveCart();
       }
+      totalQuantity();
+      totalPrice();
+      saveCart();
     }
     )
   });
@@ -151,7 +148,7 @@ function updateQuantity() {
 function deleteItem() {
   const deleteButton = document.querySelectorAll('.deleteItem');
   deleteButton.forEach((deleteButton) => {
-    deleteButton.addEventListener('click', function () {
+    deleteButton.addEventListener('click', () => {
       const item = deleteButton.closest('article');
       cart = cart.filter(p => !(p.id == item.dataset.id && p.color == item.dataset.color));
       item.style.display = 'none';
@@ -177,7 +174,7 @@ const lastName = document.getElementById('lastName');
 const address = document.getElementById('address');
 const city = document.getElementById('city');
 const email = document.getElementById('email');
-const regexNames = /^[A-Za-z'àâéèêôùûçÀÂÉÈÔÙÛÇ\s-]{2,50}$/;
+const regexNames = /^[A-Za-z'àâéèêôùûçÀÂÉÈÔÙÛÇ\s-]{2,50}$/; //entre 2 et 50 caractères, pas de chiffre, espaces et tirets autorisés
 const regexEmail = /^[\w\.-]+@[\w\.-]+\.[\w]{2,3}$/;
 
 let cartProductIDs = [];
@@ -187,15 +184,9 @@ let isAddressOK = false;
 let isCityOK = false;
 let isEmailOK = false;
 
-firstName.addEventListener('change', checkFirstName);
-lastName.addEventListener('change', checkLastName);
-address.addEventListener('change', checkAddress);
-city.addEventListener('change', checkCity);
-email.addEventListener('change', checkEmail);
-
 /**
  * @class
- * @classdesc Créée un objet contact avec les informations saisies par l'utilisateur
+ * @classdesc Crée un objet contact avec les informations saisies par l'utilisateur
  */
 class Contact {
   constructor(firstName, lastName, address, city, email) {
@@ -220,6 +211,14 @@ function resetFields() {
   email.value = "";
 }
 
+/**
+ * Appel des fonctions de vérification lors de la modifcation des champs du formulaire
+ */
+firstName.addEventListener('change', checkFirstName);
+lastName.addEventListener('change', checkLastName);
+address.addEventListener('change', checkAddress);
+city.addEventListener('change', checkCity);
+email.addEventListener('change', checkEmail);
 
 /**
  * Vérifie si les informations saisies dans le champ "Prénom" sont correctes
@@ -332,12 +331,12 @@ function order(event) {
           .then((response) => response.json())
           .then((data) => {
             document.location.href = `confirmation.html?orderId=${data.orderId}`;
+            localStorage.clear(); // réinitialise le panier une fois la commande effectuée
           })
-          .catch((err) => {
-            console.log("fetch error", err);
+          .catch((error) => {
+            console.log("fetch error", error);
             alert("Un problème a été rencontré lors de l'envoi du formulaire.");
           });
-        localStorage.clear();
       }
     } else {
       alert("Veuillez vérifier les champs du formulaire.");
@@ -346,7 +345,7 @@ function order(event) {
 }
 
 /**
- * Créée le tableau de produits à envoyer au back-end (doit être un array de strings product-ID)
+ * Crée le tableau de produits à envoyer au back-end (doit être un array de strings product-ID)
  */
 function productIDs() {
   for (let element of cart) {

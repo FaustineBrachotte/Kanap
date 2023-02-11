@@ -1,7 +1,7 @@
 //_______________________________________________ Affichage de la liste des produits ______________________________________________________
 /**
  * @class
- * @classdesc Créée un nouveau produit avec les propriétés reçues de l'API
+ * @classdesc Crée un nouveau produit avec les propriétés reçues de l'API
  */
 class Product {
     constructor(jsonProduct) {

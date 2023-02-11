@@ -33,7 +33,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 //____________________________________________________ Ajout du produit au panier __________________________________________________________
 /**
  * @class
- * @classdesc Créée un nouveau canapé pour ajout au panier avec les propriétés sélectionnées par l'utilisateur
+ * @classdesc Crée un nouveau canapé pour ajout au panier avec les propriétés sélectionnées par l'utilisateur
  */
 class Couch {
     constructor(id, color, quantity) {
@@ -46,7 +46,7 @@ class Couch {
 /**
  * Appel de la fonction addToCart() au clic sur le bouton "Ajouter au panier"
  */
-document.getElementById("addToCart").addEventListener('click', function () {
+document.getElementById("addToCart").addEventListener('click', () => {
     addToCart();
 });
 
@@ -86,7 +86,7 @@ function checkInputs(color, quantity) {
 
 /**
  * Récupère le contenu du localstorage
- * @returns {Array} An empty array or an array of objects
+ * @returns {Array} Un tableau vide ou un tableau d'objets
  */
 function getCart() {
     let cartStr = localStorage.getItem("cart");
