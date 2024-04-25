@@ -1,15 +1,26 @@
-# Kanap #
+# Kanap
 
-This is the front end and back end server for Project 5 of the Web Developer path.
+## 🎓 Projet OpenClassrooms #4
 
-### Back end Prerequisites ###
+L'objectif de ce projet est de construire un site e-commerce en JavaScript. La structure HTML et le CSS sont fournis, ainsi que la partie back-end. Il s'agit d'intégrer dynamiquement les éléments afin de réaliser un site fonctionnel. 
 
-You will need to have Node and `npm` installed locally on your machine.
+<br>
 
-### Back end Installation ###
+**Enjeux :**
+- Gérer des événements JavaScript
+- Interagir avec un web service avec JavaScript
+- Valider des données issues de sources externes
+- Créer un plan de test pour une application
+<br>
 
-Clone this repo. From the "back" folder of the project, run `npm install`. You 
-can then run the server with `node server`. 
-The server should run on `localhost` with default port `3000`. If the
-server runs on another port for any reason, this is printed to the
-console when the server starts, e.g. `Listening on port 3001`.
+## Installation du back-end
+
+**Prérequis :** 
+
+Vous devez avoir Node et `npm` installés localement sur votre machine.
+
+<br>
+
+**Installation :**
+
+Clonez ce dépôt. Depuis le dossier "back" du projet, exécutez `npm install`. Vous pouvez ensuite démarrer le serveur avec `node server`. Le serveur devrait fonctionner en `local` avec le port par défaut `3000`. Si le serveur fonctionne sur un autre port pour une raison quelconque, cela est affiché dans la console lorsque le serveur démarre, par exemple : `Listening on port 3001`.
