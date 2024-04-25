@@ -13,7 +13,7 @@ L'objectif de ce projet est de construire un site e-commerce en JavaScript. La s
 - Créer un plan de test pour une application
 <br>
 
-## Installation du back-end
+## 🛠️ Installation du back-end
 
 **Prérequis :** 
 
