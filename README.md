@@ -17,7 +17,7 @@ L'objectif de ce projet est de construire un site e-commerce en JavaScript. La s
 
 **Prérequis :** 
 
-Vous devez avoir Node et `npm` installés localement sur votre machine.
+Vous devez avoir Node et `npm` installés localement sur votre machine. 
 
 <br>
 
